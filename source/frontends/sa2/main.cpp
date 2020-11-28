@@ -324,6 +324,9 @@ void run_sdl(int argc, const char * argv [])
       bool quit = false;
       do
       {
+	while (gtk_events_pending())
+	  gtk_main_iteration();
+
 	SDL_LockMutex(data.mutex);
 
 	eventTimer.tic();
@@ -425,7 +428,6 @@ void run_sdl(int argc, const char * argv [])
 
 int main(int argc, const char * argv [])
 {
-  gtk_init(nullptr, nullptr);
   //First we need to start up SDL, and make sure it went ok
   const Uint32 flags = SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO | SDL_INIT_TIMER;
   if (SDL_Init(flags) != 0)
@@ -433,6 +435,8 @@ int main(int argc, const char * argv [])
     std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
     return 1;
   }
+
+  gtk_init(nullptr, nullptr);
 
   int exit = 0;
 
