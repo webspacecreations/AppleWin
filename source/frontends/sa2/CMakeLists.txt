@@ -15,6 +15,7 @@ find_package(Boost REQUIRED
 
 find_package(SDL2 REQUIRED)
 pkg_search_module(SDL2_IMAGE REQUIRED SDL2_image)
+pkg_search_module(GTK3 REQUIRED gtk+-3.0)
 
 target_compile_features(sa2 PUBLIC cxx_std_17)
 
@@ -22,12 +23,14 @@ target_include_directories(sa2 PRIVATE
   ${Boost_INCLUDE_DIRS}
   ${SDL2_INCLUDE_DIRS}
   ${SDL2_IMAGE_INCLUDE_DIRS}
+  ${GTK3_INCLUDE_DIRS}
   )
 
 target_link_libraries(sa2 PRIVATE
   Boost::program_options
   ${SDL2_LIBRARIES}
   ${SDL2_IMAGE_LIBRARIES}
+  ${GTK3_LIBRARIES}
   appleii
   common2
   )

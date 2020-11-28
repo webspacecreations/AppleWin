@@ -1,5 +1,7 @@
 #include "frontends/sa2/utils.h"
 #include <ostream>
+#include <iostream>
+#include <gtk/gtk.h>
 
 void printRendererInfo(std::ostream & os, std::shared_ptr<SDL_Renderer> & ren, const Uint32 pixelFormat, const int selectedDriver)
 {
@@ -34,4 +36,36 @@ void printRendererInfo(std::ostream & os, std::shared_ptr<SDL_Renderer> & ren, c
   {
     os << "No Renderinfo" << std::endl;
   }
+}
+
+void doit()
+{
+  GtkWidget *dialog;
+  GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+  gint res;
+
+  dialog = gtk_file_chooser_dialog_new ("Open File",
+					NULL,
+					action,
+					"_Cancel",
+					GTK_RESPONSE_CANCEL,
+				        "_Open",
+					GTK_RESPONSE_ACCEPT,
+					NULL);
+  std::cout << "x" << std::endl;
+  res = gtk_dialog_run (GTK_DIALOG (dialog));
+  std::cout << "x" << std::endl;
+  if (res == GTK_RESPONSE_ACCEPT)
+  {
+    char *filename;
+    GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
+    std::cout << "x" << std::endl;
+    filename = gtk_file_chooser_get_filename (chooser);
+    std::cout << filename << std::endl;
+    std::cout << "x" << std::endl;
+    g_free (filename);
+    std::cout << "x" << std::endl;
+  }
+
+  gtk_widget_destroy (dialog);
 }

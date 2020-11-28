@@ -44,6 +44,7 @@
 #include "Riff.h"
 #include "Utilities.h"
 
+#include <gtk/gtk.h>
 
 namespace
 {
@@ -424,6 +425,7 @@ void run_sdl(int argc, const char * argv [])
 
 int main(int argc, const char * argv [])
 {
+  gtk_init(nullptr, nullptr);
   //First we need to start up SDL, and make sure it went ok
   const Uint32 flags = SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO | SDL_INIT_TIMER;
   if (SDL_Init(flags) != 0)

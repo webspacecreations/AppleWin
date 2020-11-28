@@ -1,5 +1,6 @@
 #include "frontends/sa2/emulator.h"
 #include "frontends/sa2/sdirectsound.h"
+#include "frontends/sa2/utils.h"
 
 #include <iostream>
 
@@ -234,6 +235,11 @@ void Emulator::processKeyDown(const SDL_KeyboardEvent & key, bool & quit)
     case SDLK_F9:
     {
       cycleVideoType(myWindow);
+      break;
+    }
+    case SDLK_F7:
+    {
+      doit();
       break;
     }
     case SDLK_F6:
