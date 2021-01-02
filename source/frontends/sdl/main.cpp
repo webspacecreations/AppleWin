@@ -1,6 +1,6 @@
-#include <iostream>
 #include <SDL.h>
-#include <SDL_image.h>
+
+#include <iostream>
 #include <memory>
 #include <iomanip>
 
@@ -30,19 +30,6 @@
 
 namespace
 {
-  int getRefreshRate()
-  {
-    SDL_DisplayMode current;
-
-    const int should_be_zero = SDL_GetCurrentDisplayMode(0, &current);
-
-    if (should_be_zero)
-    {
-      throw std::runtime_error(SDL_GetError());
-    }
-
-    return current.refresh_rate;
-  }
 
   struct Data
   {
@@ -62,16 +49,6 @@ namespace
 
     SDL_UnlockMutex(data->mutex);
     return interval;
-  }
-
-  void setApplicationIcon(const std::shared_ptr<SDL_Window> & win)
-  {
-    const std::string path = getResourcePath() + "APPLEWIN.ICO";
-    std::shared_ptr<SDL_Surface> icon(IMG_Load(path.c_str()), SDL_FreeSurface);
-    if (icon)
-    {
-      SDL_SetWindowIcon(win.get(), icon.get());
-    }
   }
 
 }

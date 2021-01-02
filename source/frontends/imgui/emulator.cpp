@@ -1,4 +1,5 @@
-#include "frontends/sdl/emulator.h"
+#include "frontends/imgui/emulator.h"
+#include "frontends/imgui/image.h"
 #include "frontends/sdl/sdirectsound.h"
 #include "frontends/sdl/utils.h"
 
@@ -21,6 +22,8 @@
 #include "Utilities.h"
 #include "SaveState.h"
 #include "SoundCore.h"
+
+#include "imgui_impl_sdl.h"
 
 // #define KEY_LOGGING_VERBOSE
 
@@ -110,12 +113,10 @@ namespace
 
 Emulator::Emulator(
   const std::shared_ptr<SDL_Window> & window,
-  const std::shared_ptr<SDL_Renderer> & renderer,
-  const std::shared_ptr<SDL_Texture> & texture,
+  const GLuint texture,
   const bool fixedSpeed
 )
   : myWindow(window)
-  , myRenderer(renderer)
   , myTexture(texture)
   , myMultiplier(1)
   , myFullscreen(false)
@@ -123,11 +124,8 @@ Emulator::Emulator(
 {
   Video & video = GetVideo();
 
-  myRect.x = video.GetFrameBufferBorderWidth();
-  myRect.y = video.GetFrameBufferBorderHeight();
-  myRect.w = video.GetFrameBufferBorderlessWidth();
-  myRect.h = video.GetFrameBufferBorderlessHeight();
-  myPitch = video.GetFrameBufferWidth() * sizeof(bgra_t);
+  myWidth = video.GetFrameBufferWidth();
+  myHeight = video.GetFrameBufferHeight();
 
   myFrameBuffer = video.GetFrameBuffer();
 }
@@ -152,20 +150,24 @@ void Emulator::execute(const size_t next)
 
 void Emulator::updateTexture()
 {
-  SDL_UpdateTexture(myTexture.get(), nullptr, myFrameBuffer, myPitch);
+  LoadTextureFromData(myTexture, myFrameBuffer, myWidth, myHeight);
 }
 
-void Emulator::refreshVideo()
+void Emulator::drawImage()
 {
-  SDL_RenderCopyEx(myRenderer.get(), myTexture.get(), &myRect, nullptr, 0.0, nullptr, SDL_FLIP_VERTICAL);
-  SDL_RenderPresent(myRenderer.get());
+  // need to flip the texture vertically
+  const ImVec2 uv0 = ImVec2(0, 1);
+  const ImVec2 uv1 = ImVec2(1, 0);
+  ImGui::Image((void*)(intptr_t)myTexture, ImGui::GetContentRegionAvail(), uv0, uv1);
 }
 
 void Emulator::processEvents(bool & quit)
 {
+  ImGuiIO& io = ImGui::GetIO();
   SDL_Event e;
   while (SDL_PollEvent(&e) != 0)
   {
+    ImGui_ImplSDL2_ProcessEvent(&e);
     switch (e.type)
     {
     case SDL_QUIT:
@@ -175,17 +177,31 @@ void Emulator::processEvents(bool & quit)
     }
     case SDL_KEYDOWN:
     {
-      processKeyDown(e.key, quit);
+      if (!io.WantCaptureKeyboard)
+      {
+	processKeyDown(e.key, quit);
+      }
       break;
     }
     case SDL_KEYUP:
     {
-      processKeyUp(e.key);
+      if (!io.WantCaptureKeyboard)
+      {
+	processKeyUp(e.key);
+      }
       break;
     }
     case SDL_TEXTINPUT:
     {
-      processText(e.text);
+      if (!io.WantCaptureKeyboard)
+      {
+	processText(e.text);
+      }
+      break;
+    }
+    case SDL_WINDOWEVENT:
+    {
+      quit = e.window.event == SDL_WINDOWEVENT_CLOSE;
       break;
     }
     }

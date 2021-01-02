@@ -1,5 +1,13 @@
+#include "StdAfx.h"
 #include "frontends/sdl/utils.h"
+#include "frontends/common2/resources.h"
 #include <ostream>
+
+#include <SDL_image.h>
+
+#include "Utilities.h"
+#include "Core.h"
+#include "Interface.h"
 
 void printRendererInfo(std::ostream & os,
 		       const std::shared_ptr<SDL_Renderer> & ren,
@@ -66,4 +74,62 @@ bool show_yes_no_dialog(const std::shared_ptr<SDL_Window> & win,
   }
 
   return buttonid == 0;
+}
+
+void updateWindowTitle(const std::shared_ptr<SDL_Window> & win)
+{
+  GetAppleWindowTitle();
+  SDL_SetWindowTitle(win.get(), g_pAppTitle.c_str());
+}
+
+void cycleVideoType(const std::shared_ptr<SDL_Window> & win)
+{
+  Video & video = GetVideo();
+  video.IncVideoType();
+
+  video.Config_Save_Video();
+  video.VideoReinitialize();
+  GetFrame().VideoRedrawScreen();
+
+  updateWindowTitle(win);
+}
+
+void cycle50ScanLines(const std::shared_ptr<SDL_Window> & win)
+{
+  Video & video = GetVideo();
+
+  VideoStyle_e videoStyle = video.GetVideoStyle();
+  videoStyle = VideoStyle_e(videoStyle ^ VS_HALF_SCANLINES);
+
+  video.SetVideoStyle(videoStyle);
+
+  video.Config_Save_Video();
+  video.VideoReinitialize();
+  GetFrame().VideoRedrawScreen();
+
+  updateWindowTitle(win);
+}
+
+int getRefreshRate()
+{
+  SDL_DisplayMode current;
+
+  const int should_be_zero = SDL_GetCurrentDisplayMode(0, &current);
+
+  if (should_be_zero)
+  {
+    throw std::runtime_error(SDL_GetError());
+  }
+
+  return current.refresh_rate;
+}
+
+void setApplicationIcon(const std::shared_ptr<SDL_Window> & win)
+{
+  const std::string path = getResourcePath() + "APPLEWIN.ICO";
+  std::shared_ptr<SDL_Surface> icon(IMG_Load(path.c_str()), SDL_FreeSurface);
+  if (icon)
+  {
+    SDL_SetWindowIcon(win.get(), icon.get());
+  }
 }

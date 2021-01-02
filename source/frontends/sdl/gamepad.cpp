@@ -10,11 +10,17 @@
 Gamepad::Gamepad(const int index)
   : myButtonCodes(2), myAxisCodes(2)
 {
-  myController.reset(SDL_GameControllerOpen(index), SDL_GameControllerClose);
   myButtonCodes[0] = SDL_CONTROLLER_BUTTON_A;
   myButtonCodes[1] = SDL_CONTROLLER_BUTTON_B;
   myAxisCodes[0] = SDL_CONTROLLER_AXIS_LEFTX;
   myAxisCodes[1] = SDL_CONTROLLER_AXIS_LEFTY;
+
+  myController.reset(SDL_GameControllerOpen(index), SDL_GameControllerClose);
+
+  if (myController)
+  {
+    LogOutput("Using Game Controller: %s\n", SDL_GameControllerName(myController.get()));
+  }
 }
 
 bool Gamepad::getButton(int i) const
