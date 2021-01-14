@@ -524,7 +524,7 @@ void QApple::on_actionScreenshot_triggered()
     }
     else
     {
-        const bool ok = myFrame->saveScreen(filename);
+        const bool ok = myFrame->SaveScreen(filename);
         if (!ok)
         {
             const QString message = QString::fromUtf8("Cannot save screenshot to %1").arg(filename);

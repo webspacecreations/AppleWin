@@ -2,8 +2,8 @@
 #define QTFRAME_H
 
 #include "linux/linuxframe.h"
-#include <memory>
 #include <QString>
+#include <QImage>
 
 class Emulator;
 class QMdiSubWindow;
@@ -17,16 +17,25 @@ public:
     virtual void FrameRefreshStatus(int drawflags);
     virtual void Initialize();
     virtual void Destroy();
+    virtual void DisplayLogo();
 
     void SetForceRepaint(const bool force);
     void SetZoom(const int x);
     void Set43Ratio();
-    bool saveScreen(const QString & filename) const;
+
+    bool SaveScreen(const QString & filename) const;
 
 private:
     Emulator * myEmulator;
     QMdiSubWindow * myWindow;
     bool myForceRepaint;
+
+    QImage myLogo;
+    QImage myFrameBuffer;
+    int mySX;
+    int mySY;
+    int mySW;
+    int mySH;
 };
 
 #endif // QTFRAME_H

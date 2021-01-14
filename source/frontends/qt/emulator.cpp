@@ -34,24 +34,14 @@ void Emulator::refreshScreen(const bool force)
     }
 }
 
-bool Emulator::saveScreen(const QString & filename) const
+void Emulator::loadVideoSettings(QImage * screenBuffer)
 {
-    return ui->video->getScreen().save(filename);
-}
-
-void Emulator::loadVideoSettings()
-{
-    ui->video->loadVideoSettings();
+    ui->video->loadVideoSettings(screenBuffer);
 }
 
 void Emulator::unloadVideoSettings()
 {
     ui->video->unloadVideoSettings();
-}
-
-void Emulator::displayLogo()
-{
-    ui->video->displayLogo();
 }
 
 void Emulator::setVideoSize(QMdiSubWindow * window, const QSize & size)

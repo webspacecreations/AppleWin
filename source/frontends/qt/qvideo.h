@@ -12,10 +12,8 @@ class QVideo : public QVIDEO_BASECLASS
 public:
     explicit QVideo(QWidget *parent = nullptr);
 
-    QImage getScreen() const;
-    void loadVideoSettings();
+    void loadVideoSettings(QImage * screenBuffer);
     void unloadVideoSettings();
-    void displayLogo();
 
 signals:
 
@@ -32,18 +30,12 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-    QImage myLogo;
+    QImage * myFrameBuffer;
 
     int mySX;
     int mySY;
     int mySW;
     int mySH;
-    int myWidth;
-    int myHeight;
-
-    quint8 * myFrameBuffer;
-
-    QImage getScreenImage() const;
 };
 
 #endif // QVIDEO_H

@@ -4,6 +4,7 @@
 #include <QFrame>
 
 class QMdiSubWindow;
+class QImage;
 
 namespace Ui {
 class Emulator;
@@ -20,10 +21,8 @@ public:
     void redrawScreen();    // regenerate image and repaint
     void refreshScreen(const bool force);
 
-    bool saveScreen(const QString & filename) const;
-    void loadVideoSettings();
+    void loadVideoSettings(QImage * screenBuffer);
     void unloadVideoSettings();
-    void displayLogo();
 
     void setZoom(QMdiSubWindow * window, const int x);
     void set43AspectRatio(QMdiSubWindow * window);

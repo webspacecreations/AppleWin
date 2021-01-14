@@ -16,22 +16,17 @@
 QVideo::QVideo(QWidget *parent) : QVIDEO_BASECLASS(parent)
 {
     this->setMouseTracking(true);
-
-    myLogo = QImage(":/resources/APPLEWINLOGO.BMP").mirrored(false, true);
 }
 
-void QVideo::loadVideoSettings()
+void QVideo::loadVideoSettings(QImage * screenBuffer)
 {
+    myFrameBuffer = screenBuffer;
     Video & video = GetVideo();
 
     mySX = video.GetFrameBufferBorderWidth();
     mySY = video.GetFrameBufferBorderHeight();
     mySW = video.GetFrameBufferBorderlessWidth();
     mySH = video.GetFrameBufferBorderlessHeight();
-    myWidth = video.GetFrameBufferWidth();
-    myHeight = video.GetFrameBufferHeight();
-
-    myFrameBuffer = video.GetFrameBuffer();
 }
 
 void QVideo::unloadVideoSettings()
@@ -39,45 +34,25 @@ void QVideo::unloadVideoSettings()
     myFrameBuffer = nullptr;
 }
 
-QImage QVideo::getScreenImage() const
-{
-    QImage frameBuffer(myFrameBuffer, myWidth, myHeight, QImage::Format_ARGB32_Premultiplied);
-    return frameBuffer;
-}
-
-QImage QVideo::getScreen() const
-{
-    QImage frameBuffer = getScreenImage();
-    QImage screen = frameBuffer.copy(mySX, mySY, mySW, mySH);
-
-    return screen;
-}
-
-void QVideo::displayLogo()
-{
-    QImage frameBuffer = getScreenImage();
-
-    QPainter painter(&frameBuffer);
-    painter.drawImage(mySX, mySY, myLogo);
-}
-
 void QVideo::paintEvent(QPaintEvent *)
 {
-    QImage frameBuffer = getScreenImage();
-
-    const QSize actual = size();
-    const double scaleX = double(actual.width()) / mySW;
-    const double scaleY = double(actual.height()) / mySH;
-
-    // then paint it on the widget with scale
+    if (myFrameBuffer)
     {
-        QPainter painter(this);
+        myFrameBuffer->bits(); // triggers a refresh of the QImage
 
-        // scale and flip vertically
-        const QTransform transform(scaleX, 0.0, 0.0, -scaleY, 0.0, actual.height());
-        painter.setTransform(transform);
+        const QSize actual = size();
+        const double scaleX = double(actual.width()) / mySW;
+        const double scaleY = double(actual.height()) / mySH;
 
-        painter.drawImage(0, 0, frameBuffer, mySX, mySY, mySW, mySH);
+        // then paint it on the widget with scale
+        {
+            QPainter painter(this);
+
+            // scale and flip vertically
+            const QTransform transform(scaleX, 0.0, 0.0, -scaleY, 0.0, actual.height());
+            painter.setTransform(transform);
+            painter.drawImage(0, 0, *myFrameBuffer, mySX, mySY, mySW, mySH);
+        }
     }
 }
 
