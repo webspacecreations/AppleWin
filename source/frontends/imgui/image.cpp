@@ -1,4 +1,5 @@
 #include "frontends/imgui/image.h"
+#include <GLES2/gl2ext.h>
 
 void LoadTextureFromData(GLuint texture, const uint8_t * data, size_t width, size_t height)
 {
@@ -15,9 +16,9 @@ void LoadTextureFromData(GLuint texture, const uint8_t * data, size_t width, siz
   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 #endif
 
-  // we need ARGB, but GL_ARGB does not exist
-  // so BGRA + REV = ARGB
-  const GLenum format = GL_BGRA;
-  const GLenum type = GL_UNSIGNED_INT_8_8_8_8_REV;
+  // I have no idea how this works, but it works
+  const GLenum format = GL_BGRA_EXT; // without _EXT colors are all over the place
+  const GLenum type = GL_UNSIGNED_BYTE;
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, type, data);
+
 }

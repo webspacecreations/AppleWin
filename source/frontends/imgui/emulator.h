@@ -1,8 +1,7 @@
 #pragma once
 
-#include <SDL.h>
 #include <memory>
-#include <GL/gl.h>
+#include "frontends/imgui/gles.h"
 
 #include "frontends/common2/speed.h"
 #include "imgui.h"
