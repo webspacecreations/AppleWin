@@ -1,4 +1,4 @@
 #pragma once
 
 #include <SDL.h>
-#include <GLES2/gl2.h>
+#include <GLES3/gl3.h>

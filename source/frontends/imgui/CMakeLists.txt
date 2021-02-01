@@ -44,7 +44,7 @@ if (EXISTS ${IMGUI_PATH}/imgui.h)
     appleii
     common2
     )
-  target_compile_definitions(ia2 PRIVATE IMGUI_IMPL_OPENGL_ES2)
+  target_compile_definitions(ia2 PRIVATE IMGUI_IMPL_OPENGL_ES3)
 
   install(TARGETS ia2
     DESTINATION bin)
