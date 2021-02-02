@@ -17,6 +17,10 @@
 // "OpenGL ES 3.1 Mesa 19.3.2"
 // "Supported versions are: 1.00 ES, 3.00 ES, and 3.10 ES"
 
+// On my desktop
+// "OpenGL ES 3.1 Mesa 20.2.6"
+// "Supported versions are: 1.00 ES, 3.00 ES, and 3.10 ES"
+
 #include <GLES3/gl3.h>
 #define SDL_CONTEXT_MAJOR 3
 // "310 es" is accepted on a Pi4, but the imgui shaders do not compile
