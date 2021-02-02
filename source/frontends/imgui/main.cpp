@@ -170,11 +170,9 @@ int main(int argc, const char * argv [])
 
   int exit = 0;
 
-  // GL 3.0 + GLSL 130
-  const char* glsl_version = "#version 300 es";
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, SDL_CONTEXT_MAJOR); // from local gles.h
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
   // Create window with graphics context
@@ -215,7 +213,12 @@ int main(int argc, const char * argv [])
   ImGui_ImplSDL2_InitForOpenGL(window.get(), gl_context);
 
   // Setup Platform/Renderer backends
-  ImGui_ImplOpenGL3_Init(glsl_version);
+  const char* runtime_gl_version = (const char*)glGetString(GL_VERSION);
+  std::cerr << "GL_VERSION: " << runtime_gl_version << std::endl;
+  const char* runtime_glsl_version = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+  std::cerr << "GLSL_VERSION: " << runtime_glsl_version << std::endl;
+
+  ImGui_ImplOpenGL3_Init();
 
   try
   {

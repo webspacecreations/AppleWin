@@ -1,5 +1,4 @@
 #include "frontends/imgui/image.h"
-#include <GLES2/gl2ext.h>
 
 void LoadTextureFromData(GLuint texture, const uint8_t * data, size_t width, size_t height)
 {

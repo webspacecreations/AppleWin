@@ -44,7 +44,10 @@ if (EXISTS ${IMGUI_PATH}/imgui.h)
     appleii
     common2
     )
-  target_compile_definitions(ia2 PRIVATE IMGUI_IMPL_OPENGL_ES3)
+
+  # for makimum portability use ES2 (Pi3 and Pi4)
+  # ES3 works on Pi4
+  target_compile_definitions(ia2 PRIVATE IMGUI_IMPL_OPENGL_ES2)
 
   install(TARGETS ia2
     DESTINATION bin)
