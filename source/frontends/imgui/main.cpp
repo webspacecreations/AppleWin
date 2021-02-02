@@ -125,15 +125,9 @@ void run_sdl(int argc, const char * argv [], std::shared_ptr<SDL_Window> & win, 
     ImGui_ImplSDL2_NewFrame(win.get());
     ImGui::NewFrame();
 
-    ImGui::Begin("Apple ][");
-    emulator.drawImage();
-    ImGui::End();
+    emulator.drawImage();  // draws on the background
 
     ImGui::Render();
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-    glClearColor(background.x, background.y, background.z, background.w);
-    glClear(GL_COLOR_BUFFER_BIT);
-    //glUseProgram(0); // You may want this if using this code in an OpenGL 3+ context where shaders may be bound
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(win.get());
   } while (!quit);

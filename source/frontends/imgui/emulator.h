@@ -35,7 +35,10 @@ private:
 
   Speed mySpeed;
 
-  size_t myWidth;
+  size_t myPitch;
+  size_t myOffset;
   size_t myHeight;
+  size_t myBorderlessWidth;
+  size_t myBorderlessHeight;
   uint8_t* myFrameBuffer;
 };

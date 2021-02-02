@@ -124,10 +124,16 @@ Emulator::Emulator(
 {
   Video & video = GetVideo();
 
-  myWidth = video.GetFrameBufferWidth();
+  myBorderlessWidth = video.GetFrameBufferBorderlessWidth();
+  myBorderlessHeight = video.GetFrameBufferBorderlessHeight();
+  const size_t borderWidth = video.GetFrameBufferBorderWidth();
+  const size_t borderHeight = video.GetFrameBufferBorderHeight();
+  const size_t width = video.GetFrameBufferWidth();
   myHeight = video.GetFrameBufferHeight();
 
   myFrameBuffer = video.GetFrameBuffer();
+  myPitch = width;
+  myOffset = (width * borderHeight + borderWidth) * sizeof(bgra_t);
 }
 
 void Emulator::execute(const size_t next)
@@ -150,15 +156,17 @@ void Emulator::execute(const size_t next)
 
 void Emulator::updateTexture()
 {
-  LoadTextureFromData(myTexture, myFrameBuffer, myWidth, myHeight);
+  LoadTextureFromData(myTexture, myFrameBuffer + myOffset, myBorderlessWidth, myBorderlessHeight, myPitch);
 }
 
 void Emulator::drawImage()
 {
   // need to flip the texture vertically
-  const ImVec2 uv0 = ImVec2(0, 1);
-  const ImVec2 uv1 = ImVec2(1, 0);
-  ImGui::Image((void*)(intptr_t)myTexture, ImGui::GetContentRegionAvail(), uv0, uv1);
+  const ImVec2 uv0(0, 1);
+  const ImVec2 uv1(1, 0);
+  const ImVec2 zero(0, 0);
+  // draw on the background
+  ImGui::GetBackgroundDrawList()->AddImage((void*)(intptr_t)myTexture, zero, ImGui::GetIO().DisplaySize, uv0, uv1);
 }
 
 void Emulator::processEvents(bool & quit)

@@ -1,9 +1,9 @@
 #include "frontends/imgui/image.h"
 
-void LoadTextureFromData(GLuint texture, const uint8_t * data, size_t width, size_t height)
+void LoadTextureFromData(GLuint texture, const uint8_t * data, size_t width, size_t height, size_t pitch)
 {
   glBindTexture(GL_TEXTURE_2D, texture);
-
+  glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, pitch); // in pixels
   // Setup filtering parameters for display
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -19,5 +19,5 @@ void LoadTextureFromData(GLuint texture, const uint8_t * data, size_t width, siz
   const GLenum format = GL_BGRA_EXT; // without _EXT colors are all over the place
   const GLenum type = GL_UNSIGNED_BYTE;
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, type, data);
-
+  glPixelStorei(GL_UNPACK_ROW_LENGTH_EXT, 0);
 }
