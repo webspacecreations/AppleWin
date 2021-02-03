@@ -9,6 +9,7 @@
 // "Supported versions are: 1.00 ES"
 
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #define SDL_CONTEXT_MAJOR 2
 
 #elif defined(IMGUI_IMPL_OPENGL_ES3)
@@ -27,4 +28,3 @@
 
 #endif
 
-#include <GLES2/gl2ext.h>

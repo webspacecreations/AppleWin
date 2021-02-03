@@ -210,7 +210,9 @@ int main(int argc, const char * argv [])
   const char* runtime_gl_version = (const char*)glGetString(GL_VERSION);
   std::cerr << "GL_VERSION: " << runtime_gl_version << std::endl;
   const char* runtime_glsl_version = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
-  std::cerr << "GLSL_VERSION: " << runtime_glsl_version << std::endl;
+  std::cerr << "GL_SHADING_LANGUAGE_VERSION: " << runtime_glsl_version << std::endl;
+  const char* runtime_gl_extensions = (const char*)glGetString(GL_EXTENSIONS);
+  std::cerr << "GL_EXTENSIONS: " << runtime_gl_extensions << std::endl;
 
   ImGui_ImplOpenGL3_Init();
 
