@@ -258,7 +258,46 @@ void SDLImGuiFrame::RenderPresent()
   ImGui_ImplSDL2_NewFrame(myWindow.get());
   ImGui::NewFrame();
 
-  ShowSettings();
+  // Really simple menu to demonstrate Imgui methods
+  // (uses same menu item to open and close windows)
+  if (ImGui::BeginMainMenuBar())
+  {
+    if (ImGui::BeginMenu("File"))
+    {
+      if (ImGui::MenuItem("Settings", "")) {
+        if (mySettings.showSettings) {
+          mySettings.showSettings = false;
+        } else {
+          mySettings.showSettings = true;
+        }
+      }
+      if (ImGui::MenuItem("Demo", "")) {
+        if (mySettings.showDemo) {
+          mySettings.showDemo = false;
+        } else {
+          mySettings.showDemo = true;
+        }
+      }
+      ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Edit"))
+    {
+      if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+      if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+      ImGui::Separator();
+      if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+      if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+      if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+      ImGui::EndMenu();
+    }
+    ImGui::EndMainMenuBar();
+  }
+
+  if (mySettings.showSettings)
+  {
+	ShowSettings();
+  }
 
   if (mySettings.showDemo)
   {
