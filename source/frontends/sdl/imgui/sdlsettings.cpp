@@ -500,14 +500,28 @@ namespace sa2
 
           ImGui::Separator();
 
+          int trigger;
+          int target;
+          getAudioBufferSizes(trigger, target);
+
+          if (ImGui::SliderInt("Trigger", &trigger, 0, 1000, "%d ms"))
+          {
+            target = trigger;
+          }
+
+          ImGui::SliderInt("Target", &target, 0, 1000, "%d ms");
+          setAudioBufferSizes(trigger, target);
+
+          ImGui::Separator();
+
           if (ImGui::BeginTable("Devices", 5, ImGuiTableFlags_RowBg))
           {
             myAudioInfo = getAudioInfo();
             ImGui::TableSetupColumn("Running");
             ImGui::TableSetupColumn("Channels");
             ImGui::TableSetupColumn("Volume");
-            ImGui::TableSetupColumn("Buffer");
-            ImGui::TableSetupColumn("Queue");
+            ImGui::TableSetupColumn("Direct");
+            ImGui::TableSetupColumn("SDL");
             ImGui::TableHeadersRow();
 
             ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true); // this requires imgui_internal.h

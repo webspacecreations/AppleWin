@@ -24,6 +24,9 @@ namespace
     void printInfo() const;
     sa2::SoundInfo getInfo() const;
 
+    static int ourTrigger;
+    static int ourTarget;
+
   private:
     IDirectSoundBuffer * myBuffer;
 
@@ -33,6 +36,7 @@ namespace
     SDL_AudioSpec myAudioSpec;
 
     int myBytesPerSecond;
+    int myBytesPerUnit;
 
     void close();
     bool isRunning() const;
@@ -41,6 +45,8 @@ namespace
     void mixBuffer(const void * ptr, const size_t size);
   };
 
+  int DirectSoundGenerator::ourTrigger = 200;
+  int DirectSoundGenerator::ourTarget = 200;
 
   std::unordered_map<IDirectSoundBuffer *, std::shared_ptr<DirectSoundGenerator>> activeSoundGenerators;
 
@@ -48,6 +54,7 @@ namespace
     : myBuffer(buffer)
     , myAudioDevice(0)
     , myBytesPerSecond(0)
+    , myBytesPerUnit(0)
   {
     SDL_memset(&myAudioSpec, 0, sizeof(myAudioSpec));
   }
@@ -95,7 +102,8 @@ namespace
     if (myAudioDevice)
     {
       const int bitsPerSample = myAudioSpec.format & SDL_AUDIO_MASK_BITSIZE;
-      myBytesPerSecond = myAudioSpec.freq * myAudioSpec.channels * bitsPerSample / 8;
+      myBytesPerUnit = myAudioSpec.channels * bitsPerSample / 8;
+      myBytesPerSecond = myAudioSpec.freq * myBytesPerUnit;
 
       SDL_PauseAudioDevice(myAudioDevice, 0);
       return true;
@@ -177,14 +185,19 @@ namespace
     // otherwise AW starts generating a lot of samples
     // and we loose sync
 
-    // assume SDL's buffer is the same size as AW's
-    const int bytesFree = myBuffer->bufferSize - SDL_GetQueuedAudioSize(myAudioDevice);
+    const int trigger = myBytesPerSecond * DirectSoundGenerator::ourTrigger / 1000;
+    const int queued = SDL_GetQueuedAudioSize(myAudioDevice);
 
-    if (bytesFree > 0)
+    if (queued < trigger)
     {
+      const int target = myBytesPerSecond * DirectSoundGenerator::ourTarget / 1000;
+
+      // make sure we only copy full frames
+      const int bytesToCopy = ((target - queued) / myBytesPerUnit) * myBytesPerUnit;
+
       LPVOID lpvAudioPtr1, lpvAudioPtr2;
       DWORD dwAudioBytes1, dwAudioBytes2;
-      myBuffer->Read(bytesFree, &lpvAudioPtr1, &dwAudioBytes1, &lpvAudioPtr2, &dwAudioBytes2);
+      myBuffer->Read(bytesToCopy, &lpvAudioPtr1, &dwAudioBytes1, &lpvAudioPtr2, &dwAudioBytes2);
 
       if (lpvAudioPtr1 && dwAudioBytes1)
       {
@@ -258,6 +271,18 @@ namespace sa2
     }
 
     return info;
+  }
+
+  void getAudioBufferSizes(int & trigger, int & target)
+  {
+    trigger = DirectSoundGenerator::ourTrigger;
+    target = DirectSoundGenerator::ourTarget;
+  }
+
+  void setAudioBufferSizes(const int trigger, const int target)
+  {
+    DirectSoundGenerator::ourTrigger = trigger;
+    DirectSoundGenerator::ourTarget = target;
   }
 
 }
