@@ -55,11 +55,6 @@ HRESULT IDirectSoundBuffer::Stop()
   return DS_OK;
 }
 
-HRESULT IDirectSoundBuffer::SetCurrentPosition( DWORD dwNewPosition )
-{
-  return DS_OK;
-}
-
 HRESULT IDirectSoundBuffer::Play( DWORD dwReserved1, DWORD dwReserved2, DWORD dwFlags )
 {
   this->myStatus |= DSBSTATUS_PLAYING;

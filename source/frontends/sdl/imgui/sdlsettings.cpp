@@ -503,13 +503,14 @@ namespace sa2
           int trigger;
           int target;
           getAudioBufferSizes(trigger, target);
-
           if (ImGui::SliderInt("Trigger", &trigger, 0, 1000, "%d ms"))
           {
-            target = trigger;
+            target = std::max(trigger, target);
           }
-
-          ImGui::SliderInt("Target", &target, 0, 1000, "%d ms");
+          if (ImGui::SliderInt("Target", &target, 0, 1000, "%d ms"))
+          {
+            trigger = std::min(trigger, target);
+          }
           setAudioBufferSizes(trigger, target);
 
           ImGui::Separator();

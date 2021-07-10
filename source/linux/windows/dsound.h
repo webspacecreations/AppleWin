@@ -95,7 +95,6 @@ class IDirectSoundBuffer : public IUnknown
 
   HRESULT QueryInterface(int riid, void **ppvObject);
 
-  HRESULT SetCurrentPosition( DWORD dwNewPosition );
   HRESULT GetCurrentPosition( LPDWORD lpdwCurrentPlayCursor, LPDWORD lpdwCurrentWriteCursor );
 
   // Read is NOT part of Windows API

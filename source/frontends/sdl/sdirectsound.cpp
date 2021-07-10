@@ -185,13 +185,12 @@ namespace
     // otherwise AW starts generating a lot of samples
     // and we loose sync
 
-    const int trigger = myBytesPerSecond * DirectSoundGenerator::ourTrigger / 1000;
     const int queued = SDL_GetQueuedAudioSize(myAudioDevice);
+    const int trigger = myBytesPerSecond * DirectSoundGenerator::ourTrigger / 1000;
 
-    if (queued < trigger)
+    if (queued < trigger)  // trigger is already <= target
     {
       const int target = myBytesPerSecond * DirectSoundGenerator::ourTarget / 1000;
-
       // make sure we only copy full frames
       const int bytesToCopy = ((target - queued) / myBytesPerUnit) * myBytesPerUnit;
 
@@ -281,7 +280,7 @@ namespace sa2
 
   void setAudioBufferSizes(const int trigger, const int target)
   {
-    DirectSoundGenerator::ourTrigger = trigger;
+    DirectSoundGenerator::ourTrigger = std::min(trigger, target);
     DirectSoundGenerator::ourTarget = target;
   }
 
