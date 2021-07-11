@@ -140,13 +140,13 @@ void run_sdl(int argc, const char * argv [])
       frameTimer.tic();
 
       eventTimer.tic();
-      sa2::writeAudio();
       processEventsUthernet2(5);
       frame->ProcessEvents(quit);
       eventTimer.toc();
 
       cpuTimer.tic();
       frame->ExecuteOneFrame(oneFrame);
+      sa2::writeAudio();
       cpuTimer.toc();
 
       if (!options.headless)

@@ -78,8 +78,8 @@ class IDirectSoundBuffer : public IUnknown
   const std::unique_ptr<IDirectSoundNotify> mySoundNotify;
   std::vector<char> mySoundBuffer;
 
-  size_t myPlayPosition = 0;
-  size_t myWritePosition = 0;
+  size_t myPlayPosition  = 0x0000;
+  size_t myWritePosition = 0x0100;
   WORD myStatus = 0;
   LONG myVolume = DSBVOLUME_MAX;
 

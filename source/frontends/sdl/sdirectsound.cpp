@@ -24,8 +24,7 @@ namespace
     void printInfo() const;
     sa2::SoundInfo getInfo() const;
 
-    static int ourTrigger;
-    static int ourTarget;
+    static int ourBufferSize;
 
   private:
     IDirectSoundBuffer * myBuffer;
@@ -45,8 +44,7 @@ namespace
     void mixBuffer(const void * ptr, const size_t size);
   };
 
-  int DirectSoundGenerator::ourTrigger = 200;
-  int DirectSoundGenerator::ourTarget = 200;
+  int DirectSoundGenerator::ourBufferSize = 200;
 
   std::unordered_map<IDirectSoundBuffer *, std::shared_ptr<DirectSoundGenerator>> activeSoundGenerators;
 
@@ -141,7 +139,7 @@ namespace
       const float coeff = 1.0 / myBytesPerSecond;
       info.buffer = bytesInBuffer * coeff;
       info.queue = bytesInQueue * coeff;
-      info.size = myBuffer->bufferSize * coeff;
+      info.size = std::max(myBuffer->bufferSize * coeff, float(ourBufferSize / 1000.0));
     }
 
     return info;
@@ -186,13 +184,12 @@ namespace
     // and we loose sync
 
     const int queued = SDL_GetQueuedAudioSize(myAudioDevice);
-    const int trigger = myBytesPerSecond * DirectSoundGenerator::ourTrigger / 1000;
+    const int bufferSize = myBytesPerSecond * DirectSoundGenerator::ourBufferSize / 1000;
 
-    if (queued < trigger)  // trigger is already <= target
+    if (queued < bufferSize)  // trigger is already <= target
     {
-      const int target = myBytesPerSecond * DirectSoundGenerator::ourTarget / 1000;
       // make sure we only copy full frames
-      const int bytesToCopy = ((target - queued) / myBytesPerUnit) * myBytesPerUnit;
+      const int bytesToCopy = ((bufferSize - queued) / myBytesPerUnit) * myBytesPerUnit;
 
       LPVOID lpvAudioPtr1, lpvAudioPtr2;
       DWORD dwAudioBytes1, dwAudioBytes2;
@@ -272,16 +269,14 @@ namespace sa2
     return info;
   }
 
-  void getAudioBufferSizes(int & trigger, int & target)
+  void getAudioBufferSize(int & size)
   {
-    trigger = DirectSoundGenerator::ourTrigger;
-    target = DirectSoundGenerator::ourTarget;
+    size = DirectSoundGenerator::ourBufferSize;
   }
 
-  void setAudioBufferSizes(const int trigger, const int target)
+  void setAudioBufferSize(const int size)
   {
-    DirectSoundGenerator::ourTrigger = std::min(trigger, target);
-    DirectSoundGenerator::ourTarget = target;
+    DirectSoundGenerator::ourBufferSize = size;
   }
 
 }

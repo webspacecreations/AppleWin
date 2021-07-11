@@ -23,6 +23,6 @@ namespace sa2
   void printAudioInfo();
   std::vector<SoundInfo> getAudioInfo();
 
-  void getAudioBufferSizes(int & trigger, int & target);
-  void setAudioBufferSizes(const int trigger, const int target);
+  void getAudioBufferSize(int & size);
+  void setAudioBufferSize(const int size);
 }

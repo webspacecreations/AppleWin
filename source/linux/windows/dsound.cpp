@@ -97,6 +97,7 @@ HRESULT IDirectSoundBuffer::Lock( DWORD dwWriteCursor, DWORD dwWriteBytes, LPVOI
   }
   else
   {
+    myWritePosition = dwWriteCursor;
     const DWORD availableInFirstPart = this->mySoundBuffer.size() - dwWriteCursor;
 
     *lplpvAudioPtr1 = this->mySoundBuffer.data() + dwWriteCursor;

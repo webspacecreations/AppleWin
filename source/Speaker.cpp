@@ -569,8 +569,8 @@ static ULONG Spkr_SubmitWaveBuffer_FullSpeed(short* pSpeakerBuffer, ULONG nNumSa
 	UINT nBytesFree = g_dwDSSpkrBufferSize - nBytesRemaining;	// Calc free buffer space
 	ULONG nNumSamplesToUse = nNumSamples + nNumPadSamples;
 
-	if(nNumSamplesToUse * sizeof(short) > nBytesFree)
-		nNumSamplesToUse = nBytesFree / sizeof(short);
+	if(nNumSamplesToUse * sizeof(short) >= nBytesFree)
+		nNumSamplesToUse = nBytesFree / sizeof(short) - 1;
 
 	//
 
@@ -766,8 +766,8 @@ static ULONG Spkr_SubmitWaveBuffer(short* pSpeakerBuffer, ULONG nNumSamples)
 	UINT nBytesFree = g_dwDSSpkrBufferSize - nBytesRemaining;	// Calc free buffer space
 	ULONG nNumSamplesToUse = nNumSamples;
 
-	if(nNumSamplesToUse * sizeof(short) > nBytesFree)
-		nNumSamplesToUse = nBytesFree / sizeof(short);
+	if(nNumSamplesToUse * sizeof(short) >= nBytesFree)
+		nNumSamplesToUse = nBytesFree / sizeof(short) - 1;
 
 	if(bBufferError)
 		pSpeakerBuffer = &pSpeakerBuffer[nNumSamples - nNumSamplesToUse];

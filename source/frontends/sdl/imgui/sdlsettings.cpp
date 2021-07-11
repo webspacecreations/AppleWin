@@ -500,22 +500,16 @@ namespace sa2
 
           ImGui::Separator();
 
-          int trigger;
-          int target;
-          getAudioBufferSizes(trigger, target);
-          if (ImGui::SliderInt("Trigger", &trigger, 0, 1000, "%d ms"))
+          int size;
+          getAudioBufferSize(size);
+          if (ImGui::SliderInt("Buffer size", &size, 0, 1000, "%d ms"))
           {
-            target = std::max(trigger, target);
+            setAudioBufferSize(size);
           }
-          if (ImGui::SliderInt("Target", &target, 0, 1000, "%d ms"))
-          {
-            trigger = std::min(trigger, target);
-          }
-          setAudioBufferSizes(trigger, target);
 
           ImGui::Separator();
 
-          if (ImGui::BeginTable("Devices", 5, ImGuiTableFlags_RowBg))
+          if (ImGui::BeginTable("Devices", 6, ImGuiTableFlags_RowBg))
           {
             myAudioInfo = getAudioInfo();
             ImGui::TableSetupColumn("Running");
@@ -523,6 +517,7 @@ namespace sa2
             ImGui::TableSetupColumn("Volume");
             ImGui::TableSetupColumn("Direct");
             ImGui::TableSetupColumn("SDL");
+            ImGui::TableSetupColumn("Total");
             ImGui::TableHeadersRow();
 
             ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true); // this requires imgui_internal.h
@@ -538,6 +533,9 @@ namespace sa2
               ImGui::SliderFloat("", &device.buffer, 0.0f, device.size, "%.3f");
               ImGui::TableNextColumn();
               ImGui::SliderFloat("", &device.queue, 0.0f, device.size, "%.3f");
+              ImGui::TableNextColumn();
+              float total = device.buffer + device.queue;
+              ImGui::SliderFloat("", &total, 0.0f, 2 * device.size, "%.3f");
             }
             ImGui::PushItemFlag(ImGuiItemFlags_Disabled, false);
 
