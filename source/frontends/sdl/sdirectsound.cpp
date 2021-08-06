@@ -44,7 +44,7 @@ namespace
     void mixBuffer(const void * ptr, const size_t size);
   };
 
-  int DirectSoundGenerator::ourBufferSize = 200;
+  int DirectSoundGenerator::ourBufferSize = 10;
 
   std::unordered_map<IDirectSoundBuffer *, std::shared_ptr<DirectSoundGenerator>> activeSoundGenerators;
 
@@ -184,6 +184,11 @@ namespace
     // and we loose sync
 
     const int queued = SDL_GetQueuedAudioSize(myAudioDevice);
+    if (queued > 5) { // This value should be half that in the else statement
+		  DirectSoundGenerator::ourBufferSize = (int)(queued * 2);
+	  } else {
+		  DirectSoundGenerator::ourBufferSize = 10;
+	  }
     const int bufferSize = myBytesPerSecond * DirectSoundGenerator::ourBufferSize / 1000;
 
     if (queued < bufferSize)  // trigger is already <= target
